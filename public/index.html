@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro AI Chatbot</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&family=Courier+Prime:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier Prime', monospace;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #0a0a0a;
+            background-color: #a8ff98;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            text-shadow: 0 0 2px rgba(10, 10, 10, 0.3);
+        }
+
+        header, footer {
+            background-color: #82cc75;
+            padding: 1rem;
+            border-color: #0a0a0a;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #0a0a0a;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.875rem;
+            border-top: 2px solid #0a0a0a;
+        }
+
+        h1, h2, h3 {
+            font-family: 'VT323', monospace;
+            color: #006600;
+        }
+
+        h1 {
+            font-size: 3rem;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+        }
+
+        #darkModeToggle {
+            background: none;
+            border: 2px solid #0a0a0a;
+            color: #0a0a0a;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            font-family: 'VT323', monospace;
+            transition: all 0.3s ease;
+        }
+
+        #darkModeToggle:hover {
+            background-color: #0a0a0a;
+            color: #a8ff98;
+        }
+
+        main {
+            flex-grow: 1;
+            padding: 2rem 1rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        #welcome {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            border: 2px solid #0a0a0a;
+            box-shadow: 0 0 10px #0a0a0a;
+            animation: glow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 5px #0a0a0a; }
+            to { box-shadow: 0 0 20px #0a0a0a; }
+        }
+
+        #welcome p {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        #features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .feature-card {
+            background-color: #c4ffc4;
+            padding: 1.5rem;
+            border: 2px solid #0a0a0a;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(10, 10, 10, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            color: #003300;
+            font-size: 1rem;
+        }
+
+        #chatbox {
+            display: none;
+            height: 400px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background-color: #c4ffc4;
+            border: 2px solid #0a0a0a;
+            font-family: 'Courier Prime', monospace;
+            font-size: 1.1rem;
+            color: #003300;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            border: 1px solid #0a0a0a;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background-color: #82cc75;
+            border-color: #0a0a0a;
+            margin-left: auto;
+        }
+
+        .bot-message {
+            background-color: #a8ff98;
+            border-color: #0a0a0a;
+        }
+
+        #chatForm {
+            display: flex;
+            margin-top: 1rem;
+        }
+
+        #userInput {
+            flex-grow: 1;
+            padding: 0.75rem;
+            border: 2px solid #0a0a0a;
+            background-color: #c4ffc4;
+            color: #003300;
+            font-family: 'Courier Prime', monospace;
+            font-size: 1.1rem;
+        }
+
+        #sendButton {
+            padding: 0.75rem 1.5rem;
+            background-color: #0a0a0a;
+            color: #a8ff98;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Courier Prime', monospace;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        #sendButton:hover {
+            background-color: #333;
+        }
+
+        /* Retro-inspired scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #c4ffc4;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #0a0a0a;
+            border: 2px solid #c4ffc4;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #333;
+        }
+
+        /* Dark mode styles */
+        body:not(.light-mode) {
+            color: #33ff00;
+            background-color: #0a0a0a;
+            text-shadow: 0 0 2px rgba(51, 255, 0, 0.5);
+        }
+
+        body:not(.light-mode) header,
+        body:not(.light-mode) footer {
+            background-color: #1a1a1a;
+            border-color: #33ff00;
+        }
+
+        body:not(.light-mode) h1,
+        body:not(.light-mode) h2,
+        body:not(.light-mode) h3 {
+            color: #33ff00;
+        }
+
+        body:not(.light-mode) #darkModeToggle {
+            border-color: #33ff00;
+            color: #33ff00;
+        }
+
+        body:not(.light-mode) #darkModeToggle:hover {
+            background-color: #33ff00;
+            color: #0a0a0a;
+        }
+
+        body:not(.light-mode) .feature-card,
+        body:not(.light-mode) #chatbox {
+            background-color: #1a1a1a;
+            border-color: #33ff00;
+        }
+
+        body:not(.light-mode) .feature-card h3,
+        body:not(.light-mode) .feature-card p,
+        body:not(.light-mode) #chatbox,
+        body:not(.light-mode) #userInput {
+            color: #33ff00;
+        }
+
+        body:not(.light-mode) .user-message {
+            background-color: #002200;
+            border-color: #00cc00;
+        }
+
+        body:not(.light-mode) .bot-message {
+            background-color: #001100;
+            border-color: #33ff00;
+        }
+
+        body:not(.light-mode) #userInput {
+            background-color: #1a1a1a;
+            border-color: #33ff00;
+        }
+
+        body:not(.light-mode) #sendButton {
+            background-color: #33ff00;
+            color: #0a0a0a;
+        }
+
+        body:not(.light-mode) #sendButton:hover {
+            background-color: #00cc00;
+        }
+
+        body:not(.light-mode) #welcome {
+            border-color: #33ff00;
+            box-shadow: 0 0 10px #33ff00;
+        }
+
+        body:not(.light-mode) ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        body:not(.light-mode) ::-webkit-scrollbar-thumb {
+            background: #33ff00;
+            border: 2px solid #0a0a0a;
+        }
+
+        body:not(.light-mode) ::-webkit-scrollbar-thumb:hover {
+            background: #00cc00;
+        }
+
+        @keyframes scanline {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(100%);
+            }
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%,
+                rgba(0, 0, 0, 0.25) 50%
+            );
+            background-size: 100% 4px;
+            z-index: 1000;
+            animation: scanline 10s linear infinite;
+            opacity: 0.1;
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <header>
+        <h1>BetterAI</h1>
+        <button id="darkModeToggle">DARK MODE</button>
+    </header>
+
+    <main>
+        <div id="welcome">
+            <h2>WELCOME TO BetterAI</h2>
+            <p>This project was designed with a single purpose: to enhance your intelligence. It will do everything in its power to achieve this goal.</p>
+            <p>This is a fun and functional wrapper project, created in just an hour.</p>
+        </div>
+
+        <div id="features">
+            <div class="feature-card">
+                <div class="feature-icon">💾</div>
+                <h3>SMART TALKS</h3>
+                <p>Engage in intelligent dialogues powered by cutting-edge AI.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>RAPID RESPONSE</h3>
+                <p>Get lightning-fast answers to your queries.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>SECURE SYSTEM</h3>
+                <p>Haha Ultimate Security as this thing doesn't have a Database</p>
+            </div>
+        </div>
+
+        <div id="chatbox"></div>
+
+        <form id="chatForm">
+            <input type="text" id="userInput" placeholder="TYPE YOUR MESSAGE..." required>
+            <button type="submit" id="sendButton">SEND</button>
+        </form>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 BetterAI CHATBOT. ALL RIGHTS RESERVED.</p>
+    </footer>
+
+    <script>
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+
+        // Set initial button text
+        darkModeToggle.textContent = 'DARK MODE';
+
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('light-mode');
+            darkModeToggle.textContent = body.classList.contains('light-mode') ? 'DARK MODE' : 'LIGHT MODE';
+        });
+
+        const chatbox = document.getElementById('chatbox');
+        const chatForm = document.getElementById('chatForm');
+        const userInput = document.getElementById('userInput');
+        const welcome = document.getElementById('welcome');
+        const features = document.getElementById('features');
+
+        async function addMessage(text, className) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', className);
+            messageElement.textContent = text;
+            chatbox.appendChild(messageElement);
+            chatbox.scrollTop = chatbox.scrollHeight;
+
+            if (className === 'user-message') {
+                try {
+                    const response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ message: text }),
+                    });
+                    const data = await response.json();
+                    addMessage(data.message, 'bot-message');
+                } catch (error) {
+                    console.error('Error:', error);
+                    addMessage('Oops! Something went wrong. Please try again.', 'bot-message');
+                }
+            }
+        }
+
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const message = userInput.value.trim();
+            if (message) {
+                addMessage(message, 'user-message');
+                userInput.value = '';
+                
+                if (welcome.style.display !== 'none') {
+                    welcome.style.display = 'none';
+                    features.style.display = 'none';
+                    chatbox.style.display = 'block';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
